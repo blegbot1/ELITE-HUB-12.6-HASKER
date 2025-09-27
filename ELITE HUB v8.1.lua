@@ -28,9 +28,73 @@ local ESPTab = Window:CreateTab("👁️ ESP", 6026568198)
 local CombatTab = Window:CreateTab("🎯 AIMBOT", 7733960981)
 local TeleportTab = Window:CreateTab("🌀 ТЕЛЕПОРТ", 6023426915)
 local KillAllTab = Window:CreateTab("⚔️ УБИТЬ ВСЕХ", 0)
+local GameHubTab = Window:CreateTab("🎮 GAME HUB", 6022668888)  -- Новая вкладка
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+
+--[[
+    ==============================
+    НОВАЯ ВКЛАДКА GAME HUB
+    ==============================
+]]--
+local GameHubSection = GameHubTab:CreateSection("🎮 GAME HUB - Мульти-игровой хаб")
+
+GameHubTab:CreateLabel("🎮 Game Hub - мульти-игровой хаб от GamerScripter")
+GameHubTab:CreateLabel("⚠️ Используйте на свой страх и риск!")
+
+-- Прямая кнопка загрузки Game Hub
+GameHubTab:CreateButton({
+    Name = "⚡ ЗАГРУЗИТЬ GAME HUB",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "🎮 Загрузка Game Hub",
+            Content = "Загрузка запущена...",
+            Duration = 3
+        })
+        
+        -- Прямая загрузка Game Hub скрипта
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/GamerScripter/Game-Hub/main/loader"))()
+    end,
+})
+
+-- Кнопка для просмотра исходного кода
+GameHubTab:CreateButton({
+    Name = "📄 ПОСМОТРЕТЬ ИСХОДНЫЙ КОД",
+    Callback = function()
+        setclipboard("https://raw.githubusercontent.com/GamerScripter/Game-Hub/main/loader")
+        Rayfield:Notify({
+            Title = "📄 Ссылка скопирована",
+            Content = "Ссылка на исходный код Game Hub скопирована в буфер обмена",
+            Duration = 5
+        })
+    end,
+})
+
+-- Информация о Game Hub
+GameHubTab:CreateButton({
+    Name = "ℹ️ ИНФОРМАЦИЯ О GAME HUB",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "🎮 Game Hub Information",
+            Content = "Game Hub - мульти-игровой хаб от GamerScripter\n\nФункции:\n• Скрипты для различных игр\n• Авто-обновления\n• Удобный интерфейс\n\nСсылка: https://github.com/GamerScripter/Game-Hub",
+            Duration = 8
+        })
+    end,
+})
+
+-- Рекомендации по безопасности
+GameHubTab:CreateSection("🛡️ РЕКОМЕНДАЦИИ ПО БЕЗОПАСНОСТИ")
+GameHubTab:CreateLabel("• Используйте альтернативный аккаунт")
+GameHubTab:CreateLabel("• Не вводите личные данные")
+GameHubTab:CreateLabel("• Регулярно меняйте пароли")
+GameHubTab:CreateLabel("• Проверяйте аккаунт на подозрительную активность")
+
+-- Информация о ссылке
+GameHubTab:CreateSection("🔗 ССЫЛКА НА СКРИПТ")
+GameHubTab:CreateLabel("GitHub: GamerScripter/Game-Hub")
+GameHubTab:CreateLabel("Файл: loader")
+GameHubTab:CreateLabel("URL: raw.githubusercontent.com/.../loader")
 
 --[[
     ==============================
@@ -121,11 +185,6 @@ MainTab:CreateButton({
 
 --[[
     ==============================
-    УЛУЧШЕННЫЙ AIMBOT С 3D FOV
-    ==============================
-]]--
---[[
-    ==============================
     УЛУЧШЕННЫЙ AIMBOT С ПРИОРИТЕТОМ ПО ДИСТАНЦИИ
     ==============================
 ]]--
@@ -145,7 +204,7 @@ local AimbotConfig = {
     Toggle = false,
     LockPart = "Head",
     ThirdPersonFix = true,
-    Priority = "Distance" -- Новый параметр: Distance (дистанция) или FOV (ближайший к курсору)
+    Priority = "Distance"
 }
 
 -- 3D FOV круг
@@ -336,7 +395,6 @@ CombatTab:CreateToggle({
     end
 })
 
--- НОВЫЙ ВЫПАДАЮЩИЙ СПИСОК ДЛЯ ПРИОРИТЕТА
 CombatTab:CreateDropdown({
     Name = "🎯 Приоритет цели",
     Options = {"Distance", "FOV"},
@@ -403,10 +461,6 @@ CombatTab:CreateColorPicker({
         AimbotConfig.LockedColor = value
     end
 })
-
--- Информация о приоритетах
-CombatTab:CreateLabel("🎯 Distance - ближайший игрок в игре")
-CombatTab:CreateLabel("🎯 FOV - ближайший к курсору в радиусе")
 
 --[[
     ==============================
@@ -1378,7 +1432,7 @@ end)
 -- Уведомление о загрузке
 Rayfield:Notify({
     Title = "💜 ELITE HUB v8.2 ULTRA ЗАГРУЖЕН!",
-    Content = "Все функции восстановлены | Kill All + Доп.скрипты",
+    Content = "Game Hub + Все функции включены | Kill All + Доп.скрипты",
     Duration = 6,
     Image = 7733960981
 })
