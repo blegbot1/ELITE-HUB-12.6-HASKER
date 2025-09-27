@@ -10,9 +10,9 @@ local ThemeColors = {
 
 -- Создание окна с новой темой
 local Window = Rayfield:CreateWindow({
-    Name = "🌟 ELITE HUB v8.1 COMPLETE",
-    LoadingTitle = "⚡ Полная версия...",
-    LoadingSubtitle = "💜 by gl0vakartelr | Все функции ESP",
+    Name = "🌟 ELITE HUB v8.2 ULTRA",
+    LoadingTitle = "⚡ Ультра версия...",
+    LoadingSubtitle = "💜 by gl0vakartelr | Все функции включены",
     Theme = {
         Background = ThemeColors.Main,
         Glow = ThemeColors.Accent,
@@ -121,51 +121,48 @@ MainTab:CreateButton({
 
 --[[
     ==============================
-    ИСПРАВЛЕННЫЙ ПЛАВНЫЙ AIMBOT
+    УЛУЧШЕННЫЙ AIMBOT С 3D FOV
     ==============================
 ]]--
-local AimbotSection = CombatTab:CreateSection("🎯 AIMBOT")
+--[[
+    ==============================
+    УЛУЧШЕННЫЙ AIMBOT С ПРИОРИТЕТОМ ПО ДИСТАНЦИИ
+    ==============================
+]]--
+local AimbotSection = CombatTab:CreateSection("🎯 УЛУЧШЕННЫЙ AIMBOT 3D FOV")
 
--- УЛУЧШЕННАЯ конфигурация аимбота
 local AimbotConfig = {
-    Enabled = false,
+    Enabled = true,
     TeamCheck = true,
-    FOV = 100,
+    AliveCheck = true,
+    WallCheck = true,
+    Smoothness = 0.15,
+    FOV = 120,
     ShowFOV = true,
     FOVColor = Color3.fromRGB(170, 0, 255),
-    Smoothness = 0.3, -- УВЕЛИЧЕНО для плавности
-    TargetPart = "Head",
-    Keybind = "MouseButton2",
+    LockedColor = Color3.fromRGB(255, 50, 50),
+    TriggerKey = "MouseButton2",
+    Toggle = false,
+    LockPart = "Head",
     ThirdPersonFix = true,
-    VisibilityCheck = true,
-    Prediction = 0.05, -- УМЕНЬШЕНО для точности
-    AutoFire = false,
-    FriendCheck = false,
-    Sensitivity = 1.0,
-    AutoFireRate = 0.1,
-    AutoFireLastShot = 0,
-    MaxAngle = math.rad(5) -- НОВОЕ: ограничение угла
+    Priority = "Distance" -- Новый параметр: Distance (дистанция) или FOV (ближайший к курсору)
 }
 
--- Круг FOV
+-- 3D FOV круг
 local FOVCircle = Drawing.new("Circle")
-FOVCircle.Visible = false
+FOVCircle.Visible = AimbotConfig.ShowFOV
 FOVCircle.Radius = AimbotConfig.FOV
 FOVCircle.Color = AimbotConfig.FOVColor
-FOVCircle.Thickness = 2
+FOVCircle.Thickness = 3
 FOVCircle.Filled = false
 FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
 
--- Функция проверки команды
-local function IsEnemy(targetPlayer)
-    if not AimbotConfig.TeamCheck then return true end
-    if not player.Team or not targetPlayer.Team then return true end
-    return player.Team ~= targetPlayer.Team
-end
+local Running = false
+local LockedTarget = nil
 
--- Функция для проверки видимости
+-- Функция проверки видимости (сквозь стены)
 local function IsVisible(targetPart)
-    if not AimbotConfig.VisibilityCheck then return true end
+    if not AimbotConfig.WallCheck then return true end
     
     local camera = workspace.CurrentCamera
     local origin = camera.CFrame.Position
@@ -176,125 +173,129 @@ local function IsVisible(targetPart)
     return hit and hit:IsDescendantOf(targetPart.Parent)
 end
 
--- Функция поиска цели
-local function GetBestTarget()
-    local bestTarget = nil
-    local bestDistance = math.huge
-    local localPlayer = player
+-- Функция для 1-го лица
+local function IsFirstPerson()
+    if not AimbotConfig.ThirdPersonFix then return false end
+    local character = player.Character
+    if not character then return false end
+    
+    local head = character:FindFirstChild("Head")
+    if not head then return false end
+    
     local camera = workspace.CurrentCamera
+    local distance = (head.Position - camera.CFrame.Position).Magnitude
+    return distance < 2
+end
+
+-- Поиск цели с приоритетом по дистанции
+local function GetClosestPlayer()
+    if not AimbotConfig.Enabled then return nil end
     
-    if not camera or not localPlayer.Character then return nil end
-    
+    local camera = workspace.CurrentCamera
+    local localPlayer = player
     local cameraPos = camera.CFrame.Position
     local mousePos = Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
     
+    local bestTarget = nil
+    local bestDistance = math.huge
+    local bestScreenDistance = math.huge
+    
     for _, targetPlayer in ipairs(Players:GetPlayers()) do
         if targetPlayer == localPlayer then continue end
-        if not IsEnemy(targetPlayer) then continue end
+        if AimbotConfig.TeamCheck and targetPlayer.Team == localPlayer.Team then continue end
         if not targetPlayer.Character then continue end
         
         local character = targetPlayer.Character
         local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if not humanoid or humanoid.Health <= 0 then continue end
+        local targetPart = character:FindFirstChild(AimbotConfig.LockPart)
         
-        local targetPart = character:FindFirstChild(AimbotConfig.TargetPart)
+        -- Проверка на жизнь
+        if AimbotConfig.AliveCheck and (not humanoid or humanoid.Health <= 0) then continue end
         if not targetPart then continue end
         
+        -- Проверка видимости (стены)
         if not IsVisible(targetPart) then continue end
         
         local screenPos, onScreen = camera:WorldToViewportPoint(targetPart.Position)
         if not onScreen then continue end
         
-        local distance = (targetPart.Position - cameraPos).Magnitude
-        local mouseDistance = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+        local screenPoint = Vector2.new(screenPos.X, screenPos.Y)
+        local screenDistance = (screenPoint - mousePos).Magnitude
+        local gameDistance = (targetPart.Position - cameraPos).Magnitude
         
-        if mouseDistance > AimbotConfig.FOV then continue end
-        
-        if distance < bestDistance then
-            bestTarget = targetPart
-            bestDistance = distance
+        -- Выбор приоритета
+        if AimbotConfig.Priority == "Distance" then
+            -- Приоритет по дистанции в игре (ближайший игрок)
+            if screenDistance <= AimbotConfig.FOV then
+                if gameDistance < bestDistance then
+                    bestDistance = gameDistance
+                    bestTarget = targetPart
+                    bestScreenDistance = screenDistance
+                end
+            end
+        else
+            -- Приоритет по близости к курсору (старый метод)
+            if screenDistance < bestScreenDistance and screenDistance <= AimbotConfig.FOV then
+                bestScreenDistance = screenDistance
+                bestTarget = targetPart
+                bestDistance = gameDistance
+            end
         end
     end
     
     return bestTarget
 end
 
--- НОВАЯ ПЛАВНАЯ функция прицеливания
-local function SmoothAim(target)
-    if not target then return end
-    
-    local camera = workspace.CurrentCamera
-    local currentCFrame = camera.CFrame
-    local targetPosition = target.Position
-    
-    -- Добавляем предсказание
-    local velocity = target.AssemblyLinearVelocity or target.Velocity or Vector3.new(0, 0, 0)
-    local predictedPosition = targetPosition + (velocity * AimbotConfig.Prediction)
-    
-    -- Ограничиваем максимальный угол поворота за кадр
-    local maxAngle = AimbotConfig.MaxAngle
-    
-    local currentLook = currentCFrame.LookVector
-    local desiredLook = (predictedPosition - currentCFrame.Position).Unit
-    
-    -- Вычисляем угол между текущим и желаемым направлением
-    local dot = currentLook:Dot(desiredLook)
-    local angle = math.acos(math.clamp(dot, -1, 1))
-    
-    -- Если угол слишком большой, плавно интерполируем
-    if angle > maxAngle then
-        local t = maxAngle / angle
-        desiredLook = currentLook:Lerp(desiredLook, t)
-    end
-    
-    -- Применяем плавность
-    local smoothness = math.clamp(AimbotConfig.Smoothness, 0.05, 1.0)
-    local finalLook = currentLook:Lerp(desiredLook, smoothness)
-    
-    camera.CFrame = CFrame.lookAt(currentCFrame.Position, currentCFrame.Position + finalLook)
-end
-
--- Функция авто-огня
-local function HandleAutoFire()
-    if not AimbotConfig.AutoFire then return end
-    if tick() - AimbotConfig.AutoFireLastShot < AimbotConfig.AutoFireRate then return end
-    
-    if not player.Character then return end
-    
-    local tool = player.Character:FindFirstChildOfClass("Tool")
-    if not tool then return end
-    
-    local remoteEvent = tool:FindFirstChildWhichIsA("RemoteEvent")
-    local remoteFunction = tool:FindFirstChildWhichIsA("RemoteFunction")
-    
-    if remoteEvent then
-        pcall(function() remoteEvent:FireServer("left") end)
-    elseif remoteFunction then
-        pcall(function() remoteFunction:InvokeServer("left") end)
-    end
-    
-    AimbotConfig.AutoFireLastShot = tick()
-end
-
 -- Основной цикл аимбота
 task.spawn(function()
-    while task.wait(0.03) do
-        FOVCircle.Visible = AimbotConfig.Enabled and AimbotConfig.ShowFOV
+    while task.wait() do
+        FOVCircle.Visible = AimbotConfig.ShowFOV and AimbotConfig.Enabled
         FOVCircle.Radius = AimbotConfig.FOV
-        FOVCircle.Color = AimbotConfig.FOVColor
+        FOVCircle.Color = LockedTarget and AimbotConfig.LockedColor or AimbotConfig.FOVColor
         FOVCircle.Position = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
         
-        if AimbotConfig.Enabled and (game:GetService("UserInputService"):IsMouseButtonPressed(Enum.UserInputType[AimbotConfig.Keybind]) or AimbotConfig.AutoFire) then
-            local target = GetBestTarget()
+        if Running and AimbotConfig.Enabled then
+            local target = GetClosestPlayer()
             if target then
-                SmoothAim(target) -- ИСПОЛЬЗУЕМ ПЛАВНЫЙ АИМБОТ
-                HandleAutoFire()
+                LockedTarget = target
+                local camera = workspace.CurrentCamera
+                local currentCF = camera.CFrame
+                local targetPosition = target.Position
+                
+                local smoothness = AimbotConfig.Smoothness
+                if IsFirstPerson() then
+                    smoothness = smoothness * 0.8
+                end
+                
+                local newCF = currentCF:Lerp(CFrame.new(currentCF.Position, targetPosition), smoothness)
+                camera.CFrame = newCF
+            else
+                LockedTarget = nil
             end
+        else
+            LockedTarget = nil
         end
     end
 end)
 
--- Элементы управления аимботом
+-- Управление клавишами
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType[AimbotConfig.TriggerKey] then
+        if AimbotConfig.Toggle then
+            Running = not Running
+        else
+            Running = true
+        end
+    end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+    if not AimbotConfig.Toggle and input.UserInputType == Enum.UserInputType[AimbotConfig.TriggerKey] then
+        Running = false
+    end
+end)
+
+-- Элементы управления
 CombatTab:CreateToggle({
     Name = "🎯 Включить Aimbot",
     CurrentValue = AimbotConfig.Enabled,
@@ -312,16 +313,55 @@ CombatTab:CreateToggle({
 })
 
 CombatTab:CreateToggle({
-    Name = "🔥 Авто-огонь",
-    CurrentValue = AimbotConfig.AutoFire,
+    Name = "💀 Не целить умерших",
+    CurrentValue = AimbotConfig.AliveCheck,
     Callback = function(value)
-        AimbotConfig.AutoFire = value
+        AimbotConfig.AliveCheck = value
+    end
+})
+
+CombatTab:CreateToggle({
+    Name = "🧱 Не целить сквозь стены",
+    CurrentValue = AimbotConfig.WallCheck,
+    Callback = function(value)
+        AimbotConfig.WallCheck = value
+    end
+})
+
+CombatTab:CreateToggle({
+    Name = "👁️ Исправление 1-го лица",
+    CurrentValue = AimbotConfig.ThirdPersonFix,
+    Callback = function(value)
+        AimbotConfig.ThirdPersonFix = value
+    end
+})
+
+-- НОВЫЙ ВЫПАДАЮЩИЙ СПИСОК ДЛЯ ПРИОРИТЕТА
+CombatTab:CreateDropdown({
+    Name = "🎯 Приоритет цели",
+    Options = {"Distance", "FOV"},
+    CurrentOption = AimbotConfig.Priority,
+    Callback = function(option)
+        AimbotConfig.Priority = option
+        if option == "Distance" then
+            Rayfield:Notify({
+                Title = "🎯 Приоритет: ДИСТАНЦИЯ",
+                Content = "Целится в ближайшего игрока",
+                Duration = 3
+            })
+        else
+            Rayfield:Notify({
+                Title = "🎯 Приоритет: FOV",
+                Content = "Целится в ближайшего к курсору",
+                Duration = 3
+            })
+        end
     end
 })
 
 CombatTab:CreateSlider({
-    Name = "🔘 Радиус поиска (FOV)",
-    Range = {10, 500},
+    Name = "🔘 Размер FOV",
+    Range = {50, 300},
     Increment = 10,
     CurrentValue = AimbotConfig.FOV,
     Callback = function(value)
@@ -330,7 +370,7 @@ CombatTab:CreateSlider({
 })
 
 CombatTab:CreateSlider({
-    Name = "🔄 Плавность наведения",
+    Name = "🔄 Чувствительность",
     Range = {0.05, 0.5},
     Increment = 0.01,
     CurrentValue = AimbotConfig.Smoothness,
@@ -339,46 +379,44 @@ CombatTab:CreateSlider({
     end
 })
 
-CombatTab:CreateSlider({
-    Name = "🔮 Предсказание",
-    Range = {0.0, 0.5},
-    Increment = 0.01,
-    CurrentValue = AimbotConfig.Prediction,
-    Callback = function(value)
-        AimbotConfig.Prediction = value
-    end
-})
-
-CombatTab:CreateSlider({
-    Name = "📐 Макс. угол поворота",
-    Range = {1, 15},
-    Increment = 1,
-    Suffix = "градусов",
-    CurrentValue = math.deg(AimbotConfig.MaxAngle),
-    Callback = function(value)
-        AimbotConfig.MaxAngle = math.rad(value)
+CombatTab:CreateDropdown({
+    Name = "🎯 Часть тела",
+    Options = {"Head", "HumanoidRootPart", "Torso"},
+    CurrentOption = AimbotConfig.LockPart,
+    Callback = function(option)
+        AimbotConfig.LockPart = option
     end
 })
 
 CombatTab:CreateColorPicker({
-    Name = "🎨 Цвет FOV круга",
+    Name = "💜 Цвет FOV",
     Color = AimbotConfig.FOVColor,
     Callback = function(value)
         AimbotConfig.FOVColor = value
     end
 })
 
+CombatTab:CreateColorPicker({
+    Name = "🔴 Цвет захвата",
+    Color = AimbotConfig.LockedColor,
+    Callback = function(value)
+        AimbotConfig.LockedColor = value
+    end
+})
+
+-- Информация о приоритетах
+CombatTab:CreateLabel("🎯 Distance - ближайший игрок в игре")
+CombatTab:CreateLabel("🎯 FOV - ближайший к курсору в радиусе")
+
 --[[
     ==============================
-    ПОЛНЫЙ ESP С 3D BOX И ВСЕМИ ФУНКЦИЯМИ
+    ПОЛНЫЙ ESP С 3D BOX
     ==============================
 ]]--
 local ESPConfig = {
     Enabled = false,
     TeamCheck = true,
     ShowTeammates = true,
-    
-    -- ВСЕ функции ESP
     Boxes = true,
     Names = true,
     Health = true,
@@ -388,7 +426,6 @@ local ESPConfig = {
     ShowDead = true,
     Box3DEnabled = true,
     Box3DFilled = false,
-    
     UpdateFrequency = 0.05,
     EnemyColor = Color3.fromRGB(255, 50, 50),
     TeammateColor = Color3.fromRGB(50, 255, 50),
@@ -995,7 +1032,7 @@ ESPTab:CreateSlider({
 
 --[[
     ==============================
-    ТЕЛЕПОРТ (БЕЗ ИЗМЕНЕНИЙ)
+    ТЕЛЕПОРТ
     ==============================
 ]]--
 local TeleportSection = TeleportTab:CreateSection("🌀 УЛУЧШЕННЫЙ ТЕЛЕПОРТ")
@@ -1005,8 +1042,6 @@ local teleportConnection
 local TeleportConfig = {
     Distance = 10,
     Height = 0,
-    MinDistance = 0,
-    MaxDistance = 20,
     CurrentSpread = 0
 }
 
@@ -1039,7 +1074,7 @@ local PlayerDropdown = TeleportTab:CreateDropdown({
     end,
 })
 
--- Обновление списка игроков при подключении/отключении
+-- Обновление списка игроков
 Players.PlayerAdded:Connect(function()
     PlayerDropdown:Refresh(UpdatePlayerList())
 end)
@@ -1112,79 +1147,6 @@ TeleportTab:CreateButton({
     end
 })
 
--- Непрерывный телепорт
-TeleportTab:CreateButton({
-    Name = "🌀 ВКЛ/ВЫКЛ Непрерывный телепорт",
-    Callback = function()
-        teleporting = not teleporting
-        
-        if teleporting then
-            if not player.Character then return end
-            
-            local root = player.Character.HumanoidRootPart
-            if not root then return end
-            
-            teleportConnection = game:GetService("RunService").Heartbeat:Connect(function()
-                if not player.Character or not root.Parent then
-                    if teleportConnection then teleportConnection:Disconnect() end
-                    return
-                end
-                
-                local root = player.Character.HumanoidRootPart
-                local lookVector = root.CFrame.LookVector
-                local rightVector = root.CFrame.RightVector
-                local centerPos = root.Position + (lookVector * TeleportConfig.Distance)
-                
-                local playersToTeleport = {}
-                if SelectedPlayer then
-                    if SelectedPlayer.Character then
-                        table.insert(playersToTeleport, SelectedPlayer)
-                    end
-                else
-                    for _, targetPlayer in ipairs(Players:GetPlayers()) do
-                        if targetPlayer ~= player and targetPlayer.Character then
-                            table.insert(playersToTeleport, targetPlayer)
-                        end
-                    end
-                end
-                
-                for i, targetPlayer in ipairs(playersToTeleport) do
-                    local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-                    local targetHumanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
-                    
-                    if targetRoot and targetHumanoid and targetHumanoid.Health > 0 then
-                        pcall(function()
-                            if TeleportConfig.CurrentSpread == 0 then
-                                targetRoot.CFrame = CFrame.new(centerPos + Vector3.new(0, TeleportConfig.Height, 0))
-                            else
-                                local offset = rightVector * ((i - 1) - (#playersToTeleport - 1) / 2) * TeleportConfig.CurrentSpread
-                                local targetPos = centerPos + offset + Vector3.new(0, TeleportConfig.Height, 0)
-                                targetRoot.CFrame = CFrame.new(targetPos)
-                            end
-                        end)
-                    end
-                end
-            end)
-            
-            Rayfield:Notify({
-                Title = "🌀 НЕПРЕРЫВНЫЙ ТЕЛЕПОРТ АКТИВИРОВАН",
-                Content = SelectedPlayer and ("Игрок " .. SelectedPlayer.Name .. " телепортируется") or "Все игроки телепортируются",
-                Duration = 3
-            })
-        else
-            if teleportConnection then
-                teleportConnection:Disconnect()
-                teleportConnection = nil
-                Rayfield:Notify({
-                    Title = "🛑 ТЕЛЕПОРТ ОСТАНОВЛЕН",
-                    Content = "Функция отключена",
-                    Duration = 2
-                })
-            end
-        end
-    end
-})
-
 -- Настройки телепорта
 TeleportTab:CreateSlider({
     Name = "📏 Дистанция телепортации",
@@ -1207,8 +1169,6 @@ TeleportTab:CreateSlider({
         TeleportConfig.CurrentSpread = value
     end
 })
-
-TeleportTab:CreateLabel("0 = все в одном месте, >0 = в линию")
 
 --[[
     ==============================
@@ -1325,7 +1285,9 @@ local scriptUrls = {
     "https://glot.io/snippets/gua2ntmbdm/raw/main.lua",
     "https://pastefy.app/JOWniO6o/raw",
     "https://pastebin.com/raw/LgZwZ7ZB",
-    "https://pastefy.app/w7KnPY70/raw"
+    "https://pastefy.app/w7KnPY70/raw",
+    "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Gale%20Fighter",
+    "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Neptunian%20V"
 }
 
 local scriptNames = {
@@ -1334,10 +1296,12 @@ local scriptNames = {
     "🛡️ Бог-режим+",
     "🧟 Зомби хаки",
     "🏎️ флинг+",
-    "🧟 Простой зомби-напарник"
+    "🧟 Простой зомби-напарник",
+    "⚔️ FE GALE FIGHTER",
+    "🌊 FE Neptunian V"
 }
 
-for i = 1, 6 do
+for i = 1, #scriptNames do
     MainTab:CreateButton({
         Name = scriptNames[i],
         Callback = function()
@@ -1413,10 +1377,10 @@ end)
 
 -- Уведомление о загрузке
 Rayfield:Notify({
-    Title = "💜 ELITE HUB v8.1 COMPLETE ЗАГРУЖЕН!",
-    Content = "Плавный аимбот | Все функции ESP возвращены",
+    Title = "💜 ELITE HUB v8.2 ULTRA ЗАГРУЖЕН!",
+    Content = "Все функции восстановлены | Kill All + Доп.скрипты",
     Duration = 6,
     Image = 7733960981
 })
 
-print("🌟 ELITE HUB v8.1 COMPLETE успешно загружен!")
+print("🌟 ELITE HUB v8.2 ULTRA успешно загружен!")
