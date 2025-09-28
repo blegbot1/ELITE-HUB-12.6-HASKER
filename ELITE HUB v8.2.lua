@@ -1231,7 +1231,7 @@ Rayfield:Notify({
 
 --[[
     ==============================
-    РАЗДЕЛ УБИТЬ ВСЕХ
+    РАЗДЕЛ УБИТЬ ВСЕХ (ОБНОВЛЕННЫЙ)
     ==============================
 ]]--
 local KillAllSection = KillAllTab:CreateSection("⚔️ УБИТЬ ВСЕХ ВРАГОВ")
@@ -1284,7 +1284,7 @@ KillAllTab:CreateSlider({
    end,
 })
 
--- Цикл Kill All
+-- Цикл Kill All с увеличенной дистанцией до 10000
 task.spawn(function()
     while task.wait(0.1) do
         local myChar = player.Character
@@ -1315,7 +1315,8 @@ task.spawn(function()
 
                 local shouldAttack = killAllEnabled or (dist > safeZoneRadius)
 
-                if shouldAttack and dist <= 100 then
+                -- УВЕЛИЧЕННАЯ ДИСТАНЦИЯ ДО 10000
+                if shouldAttack and dist <= 10000 then
                     tool:Activate()
                     for _, part in pairs(other.Character:GetChildren()) do
                         if part:IsA("BasePart") then
@@ -1331,10 +1332,150 @@ end)
 
 --[[
     ==============================
-    ДОПОЛНИТЕЛЬНЫЕ СКРИПТЫ
+    ОБНОВЛЕННЫЕ ДОПОЛНИТЕЛЬНЫЕ СКРИПТЫ
     ==============================
 ]]--
 local ScriptsSection = MainTab:CreateSection("📜 ДОПОЛНИТЕЛЬНЫЕ СКРИПТЫ")
+
+-- Функция для загрузки улучшенного полета (автоматическое определение платформы)
+local function LoadImprovedFlight()
+    local UserInputService = game:GetService("UserInputService")
+    local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+    
+    if isMobile then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/396abc/Script/refs/heads/main/MobileFly.lua"))()
+    else
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/396abc/Script/refs/heads/main/FlyR15.lua"))()
+    end
+end
+
+-- Функция для загрузки анимации The Rake
+local function LoadRakeAnimation()
+    local animationId = "rbxassetid://252557606"
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+
+    local animation = Instance.new("Animation")
+    animation.AnimationId = animationId
+
+    local animationTrack = humanoid:LoadAnimation(animation)
+    local defaultWalkSpeed = 50
+    humanoid.WalkSpeed = defaultWalkSpeed
+
+    local function onWalking(speed)
+        if speed > 0 then
+            humanoid.WalkSpeed = 50
+            animationTrack:Play()
+        else
+            humanoid.WalkSpeed = defaultWalkSpeed
+            animationTrack:Stop()
+        end
+    end
+
+    humanoid.Running:Connect(onWalking)
+
+    -- Добавляем инструменты для анимаций
+    local backpack = player:WaitForChild("Backpack")
+    
+    -- Tool 1: Double Slash
+    local tool1 = Instance.new("Tool")
+    tool1.Name = "double slash"
+    tool1.RequiresHandle = false
+    tool1.CanBeDropped = false
+
+    local animation1 = Instance.new("Animation")
+    animation1.AnimationId = "rbxassetid://105211514"
+
+    tool1.Activated:Connect(function()
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local animTrack = humanoid:LoadAnimation(animation1)
+            animTrack:Play()
+        end
+    end)
+    tool1.Parent = backpack
+
+    -- Tool 2: Enrage
+    local tool2 = Instance.new("Tool")
+    tool2.Name = "enrage"
+    tool2.RequiresHandle = false
+    tool2.CanBeDropped = false
+
+    local animation2 = Instance.new("Animation")
+    animation2.AnimationId = "rbxassetid://93648331"
+
+    tool2.Activated:Connect(function()
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local animTrack = humanoid:LoadAnimation(animation2)
+            animTrack:Play()
+        end
+    end)
+    tool2.Parent = backpack
+end
+
+-- Новые скрипты (5 кнопок)
+local newScripts = {
+    {
+        Name = "⚔️ FE Seraphic Blade",
+        Url = "https://pastefy.app/59mJGQGe/raw"
+    },
+    {
+        Name = "💃 FE Анимации",
+        Url = "https://raw.githubusercontent.com/7yd7/Hub/refs/heads/Branch/GUIS/Emotes.lua"
+    },
+    {
+        Name = "🛫 Улучшенный полет",
+        Callback = LoadImprovedFlight
+    },
+    {
+        Name = "👹 The Rake Анимация",
+        Callback = LoadRakeAnimation
+    },
+    {
+        Name = "🌀 Touch Fling",
+        Url = "https://rawscripts.net/raw/Universal-Script-TOUCH-FLING-30401"
+    }
+}
+
+-- Создаем кнопки для новых скриптов
+for i, scriptInfo in ipairs(newScripts) do
+    MainTab:CreateButton({
+        Name = scriptInfo.Name,
+        Callback = function()
+            Rayfield:Notify({
+                Title = "⏳ Загрузка...",
+                Content = "📥 "..scriptInfo.Name.." запускается",
+                Duration = 3
+            })
+
+            local success, err = pcall(function()
+                if scriptInfo.Callback then
+                    scriptInfo.Callback()
+                else
+                    loadstring(game:HttpGet(scriptInfo.Url, true))()
+                end
+            end)
+
+            if success then
+                Rayfield:Notify({
+                    Title = "✅ Успех!",
+                    Content = scriptInfo.Name.." успешно загружен",
+                    Duration = 4
+                })
+            else
+                Rayfield:Notify({
+                    Title = "❌ Ошибка!",
+                    Content = "Не удалось загрузить "..scriptInfo.Name..":\n"..tostring(err),
+                    Duration = 6
+                })
+            end
+        end
+    })
+end
+
+-- Старые скрипты (ваши существующие)
 local scriptUrls = {
     "https://pastefy.app/YsJgITXR/raw",
     "https://pastebin.com/raw/3Rnd9rHf",
@@ -1433,9 +1574,10 @@ end)
 -- Уведомление о загрузке
 Rayfield:Notify({
     Title = "💜 ELITE HUB v8.2 ULTRA ЗАГРУЖЕН!",
-    Content = "Game Hub + Все функции включены | Kill All + Доп.скрипты",
+    Content = "Game Hub + Все функции включены | Kill All + Доп.скрипты\n⚔️ Дистанция Kill All увеличена до 10000",
     Duration = 6,
     Image = 7733960981
 })
 
 print("🌟 ELITE HUB v8.2 ULTRA успешно загружен!")
+print("⚔️ Дистанция Kill All увеличена до 10000 studs")
