@@ -11,9 +11,9 @@ local ThemeColors = {
 
 -- Создание окна с новой темой
 local Window = Rayfield:CreateWindow({
-    Name = "🌟 ELITE HUB v8.2 ULTRA",
-    LoadingTitle = "⚡ Ультра версия...",
-    LoadingSubtitle = "💜 by gl0vakartelr | Все функции включены",
+    Name = "🌟💎 ELITE HUB 12.6 HASKER 💎🌟",
+    LoadingTitle = "⚡🔥 Hasker Edition загружается... 🔥⚡",
+    LoadingSubtitle = "💜👑 by gerkylesichakes | Версия 12.6 | Все функции включены 👑💜",
     Theme = {
         Background = ThemeColors.Main,
         Glow = ThemeColors.Accent,
@@ -29,12 +29,63 @@ local ESPTab = Window:CreateTab("👁️ ESP", 6026568198)
 local CombatTab = Window:CreateTab("🎯 AIMBOT", 7733960981)
 local TeleportTab = Window:CreateTab("🌀 ТЕЛЕПОРТ", 6023426915)
 local KillAllTab = Window:CreateTab("⚔️ УБИТЬ ВСЕХ", 0)
-local GameHubTab = Window:CreateTab("🎮 GAME HUB", 6022668888)
+local GameHubTab = Window:CreateTab("🎮 GAME HUB", 62668888)
 local FEScriptsTab = Window:CreateTab("🎭 FE СКРИПТЫ", 7733960981)
 local HubsTab = Window:CreateTab("🚀 ХАБЫ", 6022668888)
+local GameScriptsTab = Window:CreateTab("🎯 СКРИПТЫ ДЛЯ ИГР", 7733960981)
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+
+-- Вспомогательная функция для безопасного выполнения Callback
+local function SafeCallback(func)
+    return function(...)
+        local success, err = pcall(func, ...)
+        if not success then
+            Rayfield:Notify({
+                Title = "❌ Ошибка",
+                Content = "Произошла ошибка при выполнении: " .. tostring(err),
+                Duration = 5,
+                Image = 4483362458
+            })
+            warn("Callback Error:", err)
+        end
+    end
+end
+
+-- Функция для загрузки скриптов с уведомлениями
+local function LoadScript(name, url)
+    task.spawn(function()
+        Rayfield:Notify({
+            Title = "⏳ Загрузка...",
+            Content = name .. " запускается",
+            Duration = 2
+        })
+        
+        task.wait(0.5)
+        
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(url))()
+        end)
+        
+        task.wait(0.5)
+        
+        if success then
+            Rayfield:Notify({
+                Title = "✅ Успешно!",
+                Content = name .. " загружен",
+                Duration = 3
+            })
+        else
+            Rayfield:Notify({
+                Title = "❌ Ошибка!",
+                Content = "Не удалось загрузить " .. name,
+                Duration = 5
+            })
+            warn("Script Load Error:", name, err)
+        end
+    end)
+end
 
 --[[
     ==============================
@@ -46,229 +97,274 @@ local HubsSection = HubsTab:CreateSection("🎮 УНИВЕРСАЛЬНЫЕ ХА�
 HubsTab:CreateButton({
     Name = "🎮 Ghub V15",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🎮 Ghub V15 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/gclich/GHUBV15_X_ZENXOS-MAINLOADER/refs/heads/main/GHUB-X-ZENXOS-V15.txt"))()
+        LoadScript("🎮 Ghub V15", "https://raw.githubusercontent.com/gclich/GHUBV15_X_ZENXOS-MAINLOADER/refs/heads/main/GHUB-X-ZENXOS-V15.txt")
     end
 })
 
 HubsTab:CreateButton({
     Name = "❄️ Blizzard Hub V2",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "❄️ Blizzard Hub V2 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/uaahjajajqoqiqkqhwhwhw/Blizzard-Hub-Official/main/Blizzard%20Hub%20V2.lua", true))()
+        LoadScript("❄️ Blizzard Hub V2", "https://raw.githubusercontent.com/uaahjajajqoqiqkqhwhwhw/Blizzard-Hub-Official/main/Blizzard%20Hub%20V2.lua")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🎯 Game Hub",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🎯 Game Hub запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GamerScripter/Game-Hub/main/loader"))()
+        LoadScript("🎯 Game Hub", "https://raw.githubusercontent.com/GamerScripter/Game-Hub/main/loader")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🐯 Tiger X",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🐯 Tiger X запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/balintTheDevX/Tiger-X-V3/main/Tiger%20X%20V3.5%20Fixed"))()
+        LoadScript("🐯 Tiger X", "https://raw.githubusercontent.com/balintTheDevX/Tiger-X-V3/main/Tiger%20X%20V3.5%20Fixed")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🎨 Bido Skins V1.8",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🎨 Bido Skins V1.8 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/BidoSkinsYT/BidoSkinsYT/main/Bido%20Skins%20V1.8"))()
+        LoadScript("🎨 Bido Skins V1.8", "https://raw.githubusercontent.com/BidoSkinsYT/BidoSkinsYT/main/Bido%20Skins%20V1.8")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🌀 Draught Hub V5",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🌀 Draught Hub V5 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/SabrXH/Draught-Hub-V5/refs/heads/main/Script.lua"))()
+        LoadScript("🌀 Draught Hub V5", "https://raw.githubusercontent.com/SabrXH/Draught-Hub-V5/refs/heads/main/Script.lua")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🍊 OrangeX Hub",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🍊 OrangeX Hub запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ImJosh66/Ab2rW/main/ORANGEX%20V5%20RELEASED%20ORANGEX%20ON%20TOP%20.txt"))()
+        LoadScript("🍊 OrangeX Hub", "https://raw.githubusercontent.com/ImJosh66/Ab2rW/main/ORANGEX%20V5%20RELEASED%20ORANGEX%20ON%20TOP%20.txt")
     end
 })
 
 HubsTab:CreateButton({
     Name = "💪 GigaChad Hub V7",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💪 GigaChad Hub V7 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/LolPrivate/Side/main/Gigachad%20Hub%20V7.lua", true))()
+        LoadScript("💪 GigaChad Hub V7", "https://raw.githubusercontent.com/LolPrivate/Side/main/Gigachad%20Hub%20V7.lua")
     end
 })
 
 HubsTab:CreateButton({
     Name = "👻 Ghost Hub",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👻 Ghost Hub запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/GhostHub'))()
+        LoadScript("👻 Ghost Hub", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/GhostHub")
     end
 })
 
 HubsTab:CreateButton({
     Name = "⚡ Nullware Hub V3",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "⚡ Nullware Hub V3 запускается",
-            Duration = 3
-        })
         getgenv().Theme = "Blue"
-        loadstring(game:HttpGet("https://gist.githubusercontent.com/M6HqVBcddw2qaN4s/2d722888a388017c18028cd434c43a25/raw/dcccf1027fe4b90780e47767aaf584389c9d7771/EULma3fU90PUOKUn?identifier=".. (function()local a=""for b=1,256 do local c=math.random(1,3)a=a..string.char(c==1 and math.random(48,57)or c==2 and math.random(97,122)or c==3 and math.random(65,90))end;return a end)()))()
+        LoadScript("⚡ Nullware Hub V3", "https://gist.githubusercontent.com/M6HqVBcddw2qaN4s/2d722888a388017c18028cd434c43a25/raw/dcccf1027fe4b90780e47767aaf584389c9d7771/EULma3fU90PUOKUn?identifier=".. (function()local a=""for b=1,256 do local c=math.random(1,3)a=a..string.char(c==1 and math.random(48,57)or c==2 and math.random(97,122)or c==3 and math.random(65,90))end;return a end)())
     end
 })
 
 HubsTab:CreateButton({
     Name = "🔧 Haxker_6666666 Hub",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🔧 Haxker_6666666 Hub запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/FreeRobloxScripts1/Haxker_6666666-Hub/main/loader'))()
+        LoadScript("🔧 Haxker_6666666 Hub", "https://raw.githubusercontent.com/FreeRobloxScripts1/Haxker_6666666-Hub/main/loader")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🌙 Moon UI",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🌙 Moon UI запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/IlikeyocutgHAH12/MoonUI-v10-/main/MoonUI%20v10'))()
+        LoadScript("🌙 Moon UI", "https://raw.githubusercontent.com/IlikeyocutgHAH12/MoonUI-v10-/main/MoonUI%20v10")
     end
 })
 
 HubsTab:CreateButton({
     Name = "💪 GigaChad Hub v3.5",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💪 GigaChad Hub v3.5 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/OWJBWKQLAISH/GigaChad-Hub/main/Version%20V3.5'))()
+        LoadScript("💪 GigaChad Hub v3.5", "https://raw.githubusercontent.com/OWJBWKQLAISH/GigaChad-Hub/main/Version%20V3.5")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🚀 Frixon Hub",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🚀 Frixon Hub запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet('https://gist.githubusercontent.com/RedoGaming/459eb467f3df927b07ca398a68f3b053/raw/6d1f7a2c8fefd072dc53ebbbec38c6f93c7de1ad/Frixon%2520Hub!%2520New%2520OP%2520Exploit%2520Hub%2520for%2520Roblox!'))()
+        LoadScript("🚀 Frixon Hub", "https://gist.githubusercontent.com/RedoGaming/459eb467f3df927b07ca398a68f3b053/raw/6d1f7a2c8fefd072dc53ebbbec38c6f93c7de1ad/Frixon%2520Hub!%2520New%2520OP%2520Exploit%2520Hub%2520for%2520Roblox!")
     end
 })
 
 HubsTab:CreateButton({
     Name = "💎 Mega Hub",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💎 Mega Hub запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/WholeF00ds/Mega/main/Obfuscated%20Loader'),true))()
+        LoadScript("💎 Mega Hub", "https://raw.githubusercontent.com/WholeF00ds/Mega/main/Obfuscated%20Loader")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🔰 Mini Hub",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🔰 Mini Hub запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/MiniNoobie/MINI-HUB-V2/main/FINALLY%20UPDATED%20MINI%20HUB",true))()
+        LoadScript("🔰 Mini Hub", "https://raw.githubusercontent.com/MiniNoobie/MINI-HUB-V2/main/FINALLY%20UPDATED%20MINI%20HUB")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🎨 Davi GUI",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🎨 Davi GUI запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet(("https://raw.githubusercontent.com/Davicoderliner/davigui/main/Daviguiv2loader.lua"),true))()
+        LoadScript("🎨 Davi GUI", "https://raw.githubusercontent.com/Davicoderliner/davigui/main/Daviguiv2loader.lua")
     end
 })
 
 HubsTab:CreateButton({
     Name = "🅱️ B Hub",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🅱️ B Hub запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet(("https://raw.githubusercontent.com/YourLocalNzi/Ye/main/BHob6"),true))()
+        LoadScript("🅱️ B Hub", "https://raw.githubusercontent.com/YourLocalNzi/Ye/main/BHob6")
     end
 })
 
 HubsTab:CreateButton({
     Name = "👑 Legon X",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👑 Legon X запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/YellowGreg/Loadstring/main/LegonX"))()
+        LoadScript("👑 Legon X", "https://raw.githubusercontent.com/YellowGreg/Loadstring/main/LegonX")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🌊 Orca Hub",
+    Callback = function()
+        LoadScript("🌊 Orca Hub", "https://raw.githubusercontent.com/richie0866/orca/master/public/snapshot.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🎯 AirHub (Aimbot/ESP)",
+    Callback = function()
+        LoadScript("🎯 AirHub", "https://raw.githubusercontent.com/Exunys/AirHub/main/AirHub.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🔫 Parvus Hub (Shooter)",
+    Callback = function()
+        LoadScript("🔫 Parvus Hub", "https://raw.githubusercontent.com/AlexR32/Parvus/main/Parvus.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🌟 Comet Hub",
+    Callback = function()
+        LoadScript("🌟 Comet Hub", "https://raw.githubusercontent.com/AokijiFlame/Hubs/Squid/CometHub.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🏠 CarpetHack Hub",
+    Callback = function()
+        LoadScript("🏠 CarpetHack Hub", "https://raw.githubusercontent.com/RobloxHackingProject/CHHub/main/CHHub.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "⚡ Vynixu Hub",
+    Callback = function()
+        LoadScript("⚡ Vynixu Hub", "https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Loader.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🎮 Hydroxide Hub",
+    Callback = function()
+        LoadScript("🎮 Hydroxide Hub", "https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/init.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🔥 Owl Hub",
+    Callback = function()
+        LoadScript("🔥 Owl Hub", "https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "💫 Nebula Hub",
+    Callback = function()
+        LoadScript("💫 Nebula Hub", "https://raw.githubusercontent.com/Nebula-Softworks/Nebula-Hub/main/Main")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🌈 Spectrum Hub",
+    Callback = function()
+        LoadScript("🌈 Spectrum Hub", "https://raw.githubusercontent.com/SpectrumScripts/Spectrum/main/Main.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "⭐ Stellar Hub",
+    Callback = function()
+        LoadScript("⭐ Stellar Hub", "https://raw.githubusercontent.com/StellarScripts/Stellar-Hub/main/Main")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🎪 Circus Hub",
+    Callback = function()
+        LoadScript("🎪 Circus Hub", "https://raw.githubusercontent.com/CircusScripts/CircusHub/main/source")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🌙 Eclipse Hub",
+    Callback = function()
+        LoadScript("🌙 Eclipse Hub", "https://raw.githubusercontent.com/EclipseHub/Eclipse/main/Loader")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🔮 Mystic Hub",
+    Callback = function()
+        LoadScript("🔮 Mystic Hub", "https://raw.githubusercontent.com/MysticScripts/MysticHub/main/Main.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "⚔️ Gladiator Hub",
+    Callback = function()
+        LoadScript("⚔️ Gladiator Hub", "https://raw.githubusercontent.com/GladiatorScripts/Gladiator/main/Hub")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🎭 Phantom Hub",
+    Callback = function()
+        LoadScript("🎭 Phantom Hub", "https://raw.githubusercontent.com/PhantomScripts/PhantomHub/main/Main")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🌪️ Vortex Hub",
+    Callback = function()
+        LoadScript("🌪️ Vortex Hub", "https://raw.githubusercontent.com/VortexScripts/VortexHub/main/Source")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "💎 Diamond Hub",
+    Callback = function()
+        LoadScript("💎 Diamond Hub", "https://raw.githubusercontent.com/DiamondScripts/DiamondHub/main/Main.lua")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🦅 Falcon Hub",
+    Callback = function()
+        LoadScript("🦅 Falcon Hub", "https://raw.githubusercontent.com/FalconScripts/FalconHub/main/Loader")
+    end
+})
+
+HubsTab:CreateButton({
+    Name = "🌟 Nova Hub",
+    Callback = function()
+        LoadScript("🌟 Nova Hub", "https://raw.githubusercontent.com/NovaScripts/NovaHub/main/Main")
     end
 })
 
@@ -282,120 +378,70 @@ local FEBasicSection = FEScriptsTab:CreateSection("🎭 ОСНОВНЫЕ FE СК
 FEScriptsTab:CreateButton({
     Name = "🥊 Fe Punch (R15/R6)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🥊 Fe Punch запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/0Ben1/fe/main/obf_rf6iQURzu1fqrytcnLBAvW34C9N55kS9g9G3CKz086rC47M6632sEd4ZZYB0AYgV.lua.txt'),true))()
+        LoadScript("🥊 Fe Punch", "https://raw.githubusercontent.com/0Ben1/fe/main/obf_rf6iQURzu1fqrytcnLBAvW34C9N55kS9g9G3CKz086rC47M6632sEd4ZZYB0AYgV.lua.txt")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🐱 Fe Neko (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🐱 Fe Neko запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Gazer-Ha/Neko-v1/main/Extremely%20Broken"))()
+        LoadScript("🐱 Fe Neko", "https://raw.githubusercontent.com/Gazer-Ha/Neko-v1/main/Extremely%20Broken")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "⚔️ Fe Ender (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "⚔️ Fe Ender запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/9BtJhHrp", true))()
+        LoadScript("⚔️ Fe Ender", "https://pastebin.com/raw/9BtJhHrp")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🌀 Fe Glios (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🌀 Fe Glios запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet(('https://glot.io/snippets/gua2ntmbdm/raw/main.lua'),true))()
+        LoadScript("🌀 Fe Glios", "https://glot.io/snippets/gua2ntmbdm/raw/main.lua")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "💨 Fe Gale Fighter (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💨 Fe Gale Fighter запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/XPGSMEw9"))()
+        LoadScript("💨 Fe Gale Fighter", "https://pastebin.com/raw/XPGSMEw9")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "💃 Fe Griddy (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💃 Fe Griddy запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/MelonsStuff/hub/main/Griddy.txt"))()
+        LoadScript("💃 Fe Griddy", "https://raw.githubusercontent.com/MelonsStuff/hub/main/Griddy.txt")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "👊 Fe KJ (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👊 Fe KJ запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastefy.app/sdAujywd/raw"))()
+        LoadScript("👊 Fe KJ", "https://pastefy.app/sdAujywd/raw")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🔮 Fe Caducus (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🔮 Fe Caducus запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/LDL9AyQ4"))();
+        LoadScript("🔮 Fe Caducus", "https://pastebin.com/raw/LDL9AyQ4")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "⚡ Fe Sonic (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "⚡ Fe Sonic запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/uacVtsWe"))()
+        LoadScript("⚡ Fe Sonic", "https://pastebin.com/raw/uacVtsWe")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "😢 Fe Sad Boy (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "😢 Fe Sad Boy запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/hgPJbwF0"))()
+        LoadScript("😢 Fe Sad Boy", "https://pastebin.com/raw/hgPJbwF0")
     end
 })
 
@@ -405,121 +451,71 @@ local FEUtilitiesSection = FEScriptsTab:CreateSection("🛠️ FE УТИЛИТЫ
 FEScriptsTab:CreateButton({
     Name = "👨‍💼 Fe G-Man (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👨‍💼 Fe G-Man запускается",
-            Duration = 3
-        })
         _G.clientsidedeffect = true
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty18.lua"))()
+        LoadScript("👨‍💼 Fe G-Man", "https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty18.lua")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🚗 Fe Car (R15/R6)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🚗 Fe Car запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AlexCr4sh/FeScripts/main/FeCarScript.lua", true))()
+        LoadScript("🚗 Fe Car", "https://raw.githubusercontent.com/AlexCr4sh/FeScripts/main/FeCarScript.lua")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🥊 Fe Fighter (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🥊 Fe Fighter запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-FE-Fighter-inspired-by-Gale-21557"))()
+        LoadScript("🥊 Fe Fighter", "https://rawscripts.net/raw/Universal-Script-FE-Fighter-inspired-by-Gale-21557")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🤗 Fe Hug (All Games)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🤗 Fe Hug запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Hug-Gui-R6-17818"))()
+        LoadScript("🤗 Fe Hug", "https://rawscripts.net/raw/Universal-Script-Hug-Gui-R6-17818")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "👑 Fe Honored (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👑 Fe Honored запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet(('https://raw.githubusercontent.com/Cortzalno666/NectoVerse-Industries-Data/master/Scripts%20Folder/Honored.lua'),true))()
+        LoadScript("👑 Fe Honored", "https://raw.githubusercontent.com/Cortzalno666/NectoVerse-Industries-Data/master/Scripts%20Folder/Honored.lua")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "👻 Fe Invisible (All Games)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👻 Fe Invisible запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
+        LoadScript("👻 Fe Invisible", "https://pastebin.com/raw/3Rnd9rHf")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🤖 Fe NPC Control (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🤖 Fe NPC Control запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty13.lua"))()
+        LoadScript("🤖 Fe NPC Control", "https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty13.lua")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🌀 Fe Telekinesis V5",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🌀 Fe Telekinesis V5 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty11.lua"))()
+        LoadScript("🌀 Fe Telekinesis V5", "https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty11.lua")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🎨 Fe Tool Draw",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🎨 Fe Tool Draw запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Affexter/Programs/refs/heads/main/scripts/tooldrawFE.lua"))()
+        LoadScript("🎨 Fe Tool Draw", "https://raw.githubusercontent.com/Affexter/Programs/refs/heads/main/scripts/tooldrawFE.lua")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🧟 Fe Zombie (R6/R15)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🧟 Fe Zombie запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet(('https://pastefy.app/w7KnPY70/raw'),true))()
+        LoadScript("🧟 Fe Zombie", "https://pastefy.app/w7KnPY70/raw")
     end
 })
 
@@ -529,84 +525,49 @@ local FEEffectsSection = FEScriptsTab:CreateSection("✨ FE ЭФФЕКТЫ")
 FEScriptsTab:CreateButton({
     Name = "🕳️ Fe Blackhole",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🕳️ Fe Blackhole запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Bac0nHck/Scripts/main/BringFlingPlayers"))("More Scripts: t.me/arceusxscripts")
+        LoadScript("🕳️ Fe Blackhole", "https://raw.githubusercontent.com/Bac0nHck/Scripts/main/BringFlingPlayers")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🌀 Fe Radius Blackhole",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🌀 Fe Radius Blackhole запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/RkWYLL5t"))();
+        LoadScript("🌀 Fe Radius Blackhole", "https://pastebin.com/raw/RkWYLL5t")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "💍 Fe Super Ring V4",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💍 Fe Super Ring V4 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://rawscripts.net/raw/Natural-Disaster-Survival-Super-ring-V4-24296"))()
+        LoadScript("💍 Fe Super Ring V4", "https://rawscripts.net/raw/Natural-Disaster-Survival-Super-ring-V4-24296")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🔊 Fe Audio Spam",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🔊 Fe Audio Spam запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/kmXCTkBt"))();
+        LoadScript("🔊 Fe Audio Spam", "https://pastebin.com/raw/kmXCTkBt")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "⚔️ Fe Goner Divine Edge (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "⚔️ Fe Goner Divine Edge запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/sFf9MeBE"))();
+        LoadScript("⚔️ Fe Goner Divine Edge", "https://pastebin.com/raw/sFf9MeBE")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "💎 Fe Crystal Dance (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💎 Fe Crystal Dance запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/vT1URaRJ"))() 
+        LoadScript("💎 Fe Crystal Dance", "https://pastebin.com/raw/vT1URaRJ")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "💪 Fe Jerk (R15/R6)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💪 Fe Jerk запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
+        LoadScript("💪 Fe Jerk", "https://pastefy.app/YZoglOyJ/raw")
     end
 })
 
@@ -616,108 +577,63 @@ local GenesisFESection = FEScriptsTab:CreateSection("🌟 GENESIS FE СКРИП�
 FEScriptsTab:CreateButton({
     Name = "🔨 Fe Ban Hammer",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🔨 Fe Ban Hammer запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Ban%20Hammer"))()
+        LoadScript("🔨 Fe Ban Hammer", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Ban%20Hammer")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🌊 FE Neptunian V",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🌊 FE Neptunian V запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Neptunian%20V"))()
+        LoadScript("🌊 FE Neptunian V", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Neptunian%20V")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "⚔️ Fe Linked Sword",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "⚔️ Fe Linked Sword запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Linked%20Sword"))()
+        LoadScript("⚔️ Fe Linked Sword", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Linked%20Sword")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "⭐ Fe Star Glicher",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "⭐ Fe Star Glicher запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Star%20Glitcher"))()
+        LoadScript("⭐ Fe Star Glicher", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Star%20Glitcher")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🔫 FE AK-47 (Da Hood)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🔫 FE AK-47 запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/AK-47"))()
+        LoadScript("🔫 FE AK-47", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/AK-47")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "💎 Fe Krystal Dance",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💎 Fe Krystal Dance запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Krystal%20Dance"))()
+        LoadScript("💎 Fe Krystal Dance", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Krystal%20Dance")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "👮 Fe Good Cop Bad Cop",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👮 Fe Good Cop Bad Cop запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Good%20Cop%20Bad%20Cop"))()
+        LoadScript("👮 Fe Good Cop Bad Cop", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Good%20Cop%20Bad%20Cop")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "💨 Fe Gale Fighter",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "💨 Fe Gale Fighter запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Gale%20Fighter"))()
+        LoadScript("💨 Fe Gale Fighter", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Gale%20Fighter")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🔫 FE Dearsister Pistol",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🔫 FE Dearsister Pistol запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Dearsister"))()
+        LoadScript("🔫 FE Dearsister Pistol", "https://raw.githubusercontent.com/GenesisFE/Genesis/main/Obfuscations/Dearsister")
     end
 })
 
@@ -727,84 +643,272 @@ local FEAnimationsSection = FEScriptsTab:CreateSection("💃 FE АНИМАЦИИ
 FEScriptsTab:CreateButton({
     Name = "👨 Fe Animation Man (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👨 Fe Animation Man запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastefy.app/ZWgckZdU/raw"))()
+        LoadScript("👨 Fe Animation Man", "https://pastefy.app/ZWgckZdU/raw")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🕺 Fe R6 Animations (R6 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🕺 Fe R6 Animations запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ocfi/Animations-obfus/refs/heads/main/obfus"))()
+        LoadScript("🕺 Fe R6 Animations", "https://raw.githubusercontent.com/ocfi/Animations-obfus/refs/heads/main/obfus")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "👟 Fe Adidas Walk (R15)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "👟 Fe Adidas Walk запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/VFBVQ6zb"))()
+        LoadScript("👟 Fe Adidas Walk", "https://pastebin.com/raw/VFBVQ6zb")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🚶 Fe Animation Walk (R15)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🚶 Fe Animation Walk запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/T7kdfUmG"))();
+        LoadScript("🚶 Fe Animation Walk", "https://pastebin.com/raw/T7kdfUmG")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🕺 Fe Get Sturdy (Baseplate)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🕺 Fe Get Sturdy запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/xAHFn1hh"))();
+        LoadScript("🕺 Fe Get Sturdy", "https://pastebin.com/raw/xAHFn1hh")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🦸 Fe Superman (R15)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🦸 Fe Superman запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/script"))()
+        LoadScript("🦸 Fe Superman", "https://raw.githubusercontent.com/H20CalibreYT/SystemBroken/main/script")
     end
 })
 
 FEScriptsTab:CreateButton({
     Name = "🎭 Fe Emotes (R15 only)",
     Callback = function()
-        Rayfield:Notify({
-            Title = "⏳ Загрузка...",
-            Content = "🎭 Fe Emotes запускается",
-            Duration = 3
-        })
-        loadstring(game:HttpGet("https://pastebin.com/raw/eCpipCTH"))()
+        LoadScript("🎭 Fe Emotes", "https://pastebin.com/raw/eCpipCTH")
+    end
+})
+
+-- Дополнительные FE скрипты
+local AdditionalFESection = FEScriptsTab:CreateSection("✨ ДОПОЛНИТЕЛЬНЫЕ FE СКРИПТЫ")
+
+FEScriptsTab:CreateButton({
+    Name = "🎸 Fe Guitar (R6 only)",
+    Callback = function()
+        LoadScript("🎸 Fe Guitar", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Guitar")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🎤 Fe Microphone (R6 only)",
+    Callback = function()
+        LoadScript("🎤 Fe Microphone", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Microphone")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🎺 Fe Trumpet (R6 only)",
+    Callback = function()
+        LoadScript("🎺 Fe Trumpet", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Trumpet")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🎹 Fe Piano (R6 only)",
+    Callback = function()
+        LoadScript("🎹 Fe Piano", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Piano")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🏀 Fe Basketball (R15/R6)",
+    Callback = function()
+        LoadScript("🏀 Fe Basketball", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Basketball")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "⚽ Fe Soccer (R15/R6)",
+    Callback = function()
+        LoadScript("⚽ Fe Soccer", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Soccer")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🔫 Fe Gun (R6 only)",
+    Callback = function()
+        LoadScript("🔫 Fe Gun", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Gun")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "⚡ Fe Lightning (R6 only)",
+    Callback = function()
+        LoadScript("⚡ Fe Lightning", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Lightning")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🔥 Fe Fire (R6 only)",
+    Callback = function()
+        LoadScript("🔥 Fe Fire", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Fire")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "❄️ Fe Ice (R6 only)",
+    Callback = function()
+        LoadScript("❄️ Fe Ice", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Ice")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🌊 Fe Water (R6 only)",
+    Callback = function()
+        LoadScript("🌊 Fe Water", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Water")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🌪️ Fe Wind (R6 only)",
+    Callback = function()
+        LoadScript("🌪️ Fe Wind", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Wind")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🗡️ Fe Sword (R6 only)",
+    Callback = function()
+        LoadScript("🗡️ Fe Sword", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Sword")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🪓 Fe Axe (R6 only)",
+    Callback = function()
+        LoadScript("🪓 Fe Axe", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Axe")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🔨 Fe Hammer (R6 only)",
+    Callback = function()
+        LoadScript("🔨 Fe Hammer", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Hammer")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🏹 Fe Bow (R6 only)",
+    Callback = function()
+        LoadScript("🏹 Fe Bow", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Bow")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🛡️ Fe Shield (R6 only)",
+    Callback = function()
+        LoadScript("🛡️ Fe Shield", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Shield")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🎩 Fe Hat (R6 only)",
+    Callback = function()
+        LoadScript("🎩 Fe Hat", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Hat")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "👑 Fe Crown (R6 only)",
+    Callback = function()
+        LoadScript("👑 Fe Crown", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Crown")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🦴 Fe Skeleton (R6 only)",
+    Callback = function()
+        LoadScript("🦴 Fe Skeleton", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Skeleton")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "👻 Fe Ghost (R6 only)",
+    Callback = function()
+        LoadScript("👻 Fe Ghost", "https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Fe%20Ghost")
+    end
+})
+
+-- Популярные утилиты
+local FEUtilitiesSection2 = FEScriptsTab:CreateSection("🛠️ ПОПУЛЯРНЫЕ УТИЛИТЫ")
+
+FEScriptsTab:CreateButton({
+    Name = "♾️ Infinite Yield",
+    Callback = function()
+        LoadScript("♾️ Infinite Yield", "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🔍 Dark Dex V3",
+    Callback = function()
+        LoadScript("🔍 Dark Dex V3", "https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/BypassedDarkDexV3.lua")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "📊 Remote Spy",
+    Callback = function()
+        LoadScript("📊 Remote Spy", "https://raw.githubusercontent.com/exxtremestuffs/SimpleSpySource/master/SimpleSpy.lua")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🎨 Unnamed ESP",
+    Callback = function()
+        LoadScript("🎨 Unnamed ESP", "https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🔧 CMD-X",
+    Callback = function()
+        LoadScript("🔧 CMD-X", "https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "💻 Hydroxide",
+    Callback = function()
+        LoadScript("💻 Hydroxide", "https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/init.lua")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🎯 Aimbot Universal",
+    Callback = function()
+        LoadScript("🎯 Aimbot Universal", "https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/main.lua")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🌐 Universal ESP",
+    Callback = function()
+        LoadScript("🌐 Universal ESP", "https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "⚡ FPS Booster",
+    Callback = function()
+        LoadScript("⚡ FPS Booster", "https://raw.githubusercontent.com/CasperFlyModz/discord.gg-rips/main/FPSBooster.lua")
+    end
+})
+
+FEScriptsTab:CreateButton({
+    Name = "🎮 Universal Aimbot V2",
+    Callback = function()
+        LoadScript("🎮 Universal Aimbot V2", "https://raw.githubusercontent.com/ttwizz/UniversalAimbot/master/main.lua")
     end
 })
 
@@ -827,7 +931,7 @@ GameHubTab:CreateButton({
             Duration = 3
         })
         loadstring(game:HttpGet("https://raw.githubusercontent.com/GamerScripter/Game-Hub/main/loader"))()
-    end,
+    end
 })
 
 -- Кнопка для просмотра исходного кода
@@ -840,7 +944,7 @@ GameHubTab:CreateButton({
             Content = "Ссылка на исходный код Game Hub скопирована в буфер обмена",
             Duration = 5
         })
-    end,
+    end
 })
 
 -- Информация о Game Hub
@@ -852,7 +956,7 @@ GameHubTab:CreateButton({
             Content = "Game Hub - мульти-игровой хаб от GamerScripter\n\nФункции:\n• Скрипты для различных игр\n• Авто-обновления\n• Удобный интерфейс\n\nСсылка: https://github.com/GamerScripter/Game-Hub",
             Duration = 8
         })
-    end,
+    end
 })
 
 -- Рекомендации по безопасности
@@ -867,6 +971,449 @@ GameHubTab:CreateSection("🔗 ССЫЛКА НА СКРИПТ")
 GameHubTab:CreateLabel("GitHub: GamerScripter/Game-Hub")
 GameHubTab:CreateLabel("Файл: loader")
 GameHubTab:CreateLabel("URL: raw.githubusercontent.com/.../loader")
+
+--[[
+    ==============================
+    ВКЛАДКА СКРИПТОВ ДЛЯ ИГР
+    ==============================
+]]--
+
+-- Популярные игры
+local PopularGamesSection = GameScriptsTab:CreateSection("🔥 ПОПУЛЯРНЫЕ ИГРЫ")
+
+GameScriptsTab:CreateButton({
+    Name = "⚔️ Blox Fruits",
+    Callback = function()
+        LoadScript("⚔️ Blox Fruits", "https://raw.githubusercontent.com/Hosvile/Refinement/main/MC%3ABlox%20Fruits%20Autofarm%20and%20ESP")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Brookhaven RP",
+    Callback = function()
+        LoadScript("🏃 Brookhaven RP", "https://raw.githubusercontent.com/IceMael/NewIceHub/main/Brookhaven")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🐾 Adopt Me",
+    Callback = function()
+        LoadScript("🐾 Adopt Me", "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Adopt-Me.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏝️ Islands",
+    Callback = function()
+        LoadScript("🏝️ Islands", "https://raw.githubusercontent.com/CriShoux/OwlHub/master/OwlHub.txt")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏭 Jailbreak",
+    Callback = function()
+        LoadScript("🏭 Jailbreak", "https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Jailbreak/Script.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "⚡ Arsenal",
+    Callback = function()
+        LoadScript("⚡ Arsenal", "https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubArsenal")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Speed Run 4",
+    Callback = function()
+        LoadScript("🏃 Speed Run 4", "https://raw.githubusercontent.com/ahmadsgamer2/Script--Game/main/Speed-Run-4")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎮 Phantom Forces",
+    Callback = function()
+        LoadScript("🎮 Phantom Forces", "https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/main.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏰 Tower of Hell",
+    Callback = function()
+        LoadScript("🏰 Tower of Hell", "https://raw.githubusercontent.com/CasperFlyModz/discord.gg-rips/main/TowerOfHell.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🐝 Bee Swarm Simulator",
+    Callback = function()
+        LoadScript("🐝 Bee Swarm Simulator", "https://raw.githubusercontent.com/Historia00012/HISTORIAHUB/main/BSS%20FREE")
+    end
+})
+
+-- Симуляторы
+local SimulatorsSection = GameScriptsTab:CreateSection("🎰 СИМУЛЯТОРЫ")
+
+GameScriptsTab:CreateButton({
+    Name = "💪 Muscle Legends",
+    Callback = function()
+        LoadScript("💪 Muscle Legends", "https://raw.githubusercontent.com/harisiskandar178/Roblox-Script/main/Muscle%20Legend")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🐾 Pet Simulator X",
+    Callback = function()
+        LoadScript("🐾 Pet Simulator X", "https://raw.githubusercontent.com/Muhammad6196/Project-WD/main/Main.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "💰 Mining Simulator 2",
+    Callback = function()
+        LoadScript("💰 Mining Simulator 2", "https://raw.githubusercontent.com/Efe0626/MiningSimulator2/main/MiningSimulator2")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Speed Simulator",
+    Callback = function()
+        LoadScript("🏃 Speed Simulator", "https://raw.githubusercontent.com/AhmadV99/Speed-Simulator/main/Speed-Simulator.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🍔 Restaurant Tycoon 2",
+    Callback = function()
+        LoadScript("🍔 Restaurant Tycoon 2", "https://raw.githubusercontent.com/LOLking123456/Restaurant-Tycoon/main/Restaurant.lua")
+    end
+})
+
+-- Хоррор игры
+local HorrorGamesSection = GameScriptsTab:CreateSection("👻 ХОРРОР ИГРЫ")
+
+GameScriptsTab:CreateButton({
+    Name = "🚪 Doors",
+    Callback = function()
+        LoadScript("🚪 Doors", "https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Doors/Script.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏨 Apeirophobia",
+    Callback = function()
+        LoadScript("🏨 Apeirophobia", "https://raw.githubusercontent.com/Efe0626/Apeirophobia/main/Apeirophobia")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎃 Piggy",
+    Callback = function()
+        LoadScript("🎃 Piggy", "https://raw.githubusercontent.com/Efe0626/Piggy/main/Piggy")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🌲 The Mimic",
+    Callback = function()
+        LoadScript("🌲 The Mimic", "https://raw.githubusercontent.com/Efe0626/TheMimic/main/TheMimic")
+    end
+})
+
+-- Файтинг игры
+local FightingGamesSection = GameScriptsTab:CreateSection("🥊 ФАЙТИНГ ИГРЫ")
+
+GameScriptsTab:CreateButton({
+    Name = "🔥 Combat Warriors",
+    Callback = function()
+        LoadScript("🔥 Combat Warriors", "https://raw.githubusercontent.com/Efe0626/CombatWarriors/main/CombatWarriors")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "⚔️ Blade Ball",
+    Callback = function()
+        LoadScript("⚔️ Blade Ball", "https://raw.githubusercontent.com/3345-c-a-t-s-u-s/Blade-Ball/main/Blade-Ball")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🥋 Anime Fighting Simulator",
+    Callback = function()
+        LoadScript("🥋 Anime Fighting Simulator", "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Anime-Fighting-Simulator.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "👊 The Strongest Battlegrounds",
+    Callback = function()
+        LoadScript("👊 The Strongest Battlegrounds", "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/The-Strongest-Battlegrounds.lua")
+    end
+})
+
+-- Дополнительные популярные игры
+local MoreGamesSection = GameScriptsTab:CreateSection("🎲 ДОПОЛНИТЕЛЬНЫЕ ИГРЫ")
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Evade",
+    Callback = function()
+        LoadScript("🏃 Evade", "https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Games/Evade.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎨 Rainbow Friends",
+    Callback = function()
+        LoadScript("🎨 Rainbow Friends", "https://raw.githubusercontent.com/JNHHGaming/Rainbow-Friends/main/Rainbow%20Friends")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏫 Brookhaven RP (Advanced)",
+    Callback = function()
+        LoadScript("🏫 Brookhaven RP", "https://raw.githubusercontent.com/IceMael/NewIceHub/main/Brookhaven")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🌊 Sharkbite 2",
+    Callback = function()
+        LoadScript("🌊 Sharkbite 2", "https://raw.githubusercontent.com/Efe0626/Sharkbite2/main/Sharkbite2")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎪 Circus Baby",
+    Callback = function()
+        LoadScript("🎪 Circus Baby", "https://raw.githubusercontent.com/Efe0626/CircusBaby/main/CircusBaby")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Flee The Facility",
+    Callback = function()
+        LoadScript("🏃 Flee The Facility", "https://raw.githubusercontent.com/Efe0626/FleeTheFacility/main/FleeTheFacility")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎯 Counter Blox",
+    Callback = function()
+        LoadScript("🎯 Counter Blox", "https://raw.githubusercontent.com/Efe0626/CounterBlox/main/CounterBlox")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏰 Build A Boat",
+    Callback = function()
+        LoadScript("🏰 Build A Boat", "https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Build%20A%20Boat/Script.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎮 Murder Mystery 2",
+    Callback = function()
+        LoadScript("🎮 Murder Mystery 2", "https://raw.githubusercontent.com/Ethanoj1/Eclipse-Hub/master/MM2%20Script")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Parkour",
+    Callback = function()
+        LoadScript("🏃 Parkour", "https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Parkour/Script.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "⚡ Super Power Training Simulator",
+    Callback = function()
+        LoadScript("⚡ Super Power Training", "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Super-Power-Training-Simulator.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Legends Of Speed",
+    Callback = function()
+        LoadScript("🏃 Legends Of Speed", "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Legends-Of-Speed.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎯 Big Paintball",
+    Callback = function()
+        LoadScript("🎯 Big Paintball", "https://raw.githubusercontent.com/Efe0626/BigPaintball/main/BigPaintball")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Zombie Attack",
+    Callback = function()
+        LoadScript("🏃 Zombie Attack", "https://raw.githubusercontent.com/Efe0626/ZombieAttack/main/ZombieAttack")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎮 Funky Friday",
+    Callback = function()
+        LoadScript("🎮 Funky Friday", "https://raw.githubusercontent.com/ShowerHead-FluxTeam/scripts/main/funky-friday-autoplay")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Ninja Legends",
+    Callback = function()
+        LoadScript("🏃 Ninja Legends", "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Ninja-Legends.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎯 Strucid",
+    Callback = function()
+        LoadScript("🎯 Strucid", "https://raw.githubusercontent.com/Efe0626/Strucid/main/Strucid")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Zombie Rush",
+    Callback = function()
+        LoadScript("🏃 Zombie Rush", "https://raw.githubusercontent.com/Efe0626/ZombieRush/main/ZombieRush")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🎮 Project Lazarus",
+    Callback = function()
+        LoadScript("🎮 Project Lazarus", "https://raw.githubusercontent.com/Efe0626/ProjectLazarus/main/ProjectLazarus")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏰 Dungeon Quest",
+    Callback = function()
+        LoadScript("🏰 Dungeon Quest", "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Dungeon-Quest.lua")
+    end
+})
+
+-- Раздел Anime игр
+local AnimeGamesSection = GameScriptsTab:CreateSection("⚡ ANIME ИГРЫ")
+
+GameScriptsTab:CreateButton({
+    Name = "⚡ All Star Tower Defense",
+    Callback = function()
+        LoadScript("⚡ All Star Tower Defense", "https://raw.githubusercontent.com/Efe0626/AllStarTowerDefense/main/AllStarTowerDefense")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "⚔️ Anime Fighters Simulator",
+    Callback = function()
+        LoadScript("⚔️ Anime Fighters", "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Anime-Fighters-Simulator.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "👊 Anime Battle Arena",
+    Callback = function()
+        LoadScript("👊 Anime Battle Arena", "https://raw.githubusercontent.com/Efe0626/AnimeBattleArena/main/AnimeBattleArena")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "⚡ Heroes Online",
+    Callback = function()
+        LoadScript("⚡ Heroes Online", "https://raw.githubusercontent.com/Efe0626/HeroesOnline/main/HeroesOnline")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🔥 Anime Dimensions",
+    Callback = function()
+        LoadScript("🔥 Anime Dimensions", "https://raw.githubusercontent.com/Efe0626/AnimeDimensions/main/AnimeDimensions")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "⚔️ Anime Mania",
+    Callback = function()
+        LoadScript("⚔️ Anime Mania", "https://raw.githubusercontent.com/Efe0626/AnimeMania/main/AnimeMania")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "👊 Anime Punch Simulator",
+    Callback = function()
+        LoadScript("👊 Anime Punch", "https://raw.githubusercontent.com/Efe0626/AnimePunchSimulator/main/AnimePunchSimulator")
+    end
+})
+
+-- Раздел Tycoon игр
+local TycoonGamesSection = GameScriptsTab:CreateSection("🏭 TYCOON ИГРЫ")
+
+GameScriptsTab:CreateButton({
+    Name = "🏭 Retail Tycoon 2",
+    Callback = function()
+        LoadScript("🏭 Retail Tycoon 2", "https://raw.githubusercontent.com/Efe0626/RetailTycoon2/main/RetailTycoon2")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🍔 Restaurant Tycoon 2",
+    Callback = function()
+        LoadScript("🍔 Restaurant Tycoon 2", "https://raw.githubusercontent.com/LOLking123456/Restaurant-Tycoon/main/Restaurant.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏰 Theme Park Tycoon 2",
+    Callback = function()
+        LoadScript("🏰 Theme Park Tycoon 2", "https://raw.githubusercontent.com/Efe0626/ThemeParkTycoon2/main/ThemeParkTycoon2")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏭 Lumber Tycoon 2",
+    Callback = function()
+        LoadScript("🏭 Lumber Tycoon 2", "https://raw.githubusercontent.com/Efe0626/LumberTycoon2/main/LumberTycoon2")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏭 My Tycoon",
+    Callback = function()
+        LoadScript("🏭 My Tycoon", "https://raw.githubusercontent.com/Efe0626/MyTycoon/main/MyTycoon")
+    end
+})
+
+-- Раздел Obby игр
+local ObbyGamesSection = GameScriptsTab:CreateSection("🏃 OBBY ИГРЫ")
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Mega Easy Obby",
+    Callback = function()
+        LoadScript("🏃 Mega Easy Obby", "https://raw.githubusercontent.com/Efe0626/MegaEasyObby/main/MegaEasyObby")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Tower Of Hell",
+    Callback = function()
+        LoadScript("🏃 Tower Of Hell", "https://raw.githubusercontent.com/CasperFlyModz/discord.gg-rips/main/TowerOfHell.lua")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Obby But You're On A Bike",
+    Callback = function()
+        LoadScript("🏃 Obby Bike", "https://raw.githubusercontent.com/Efe0626/ObbyBike/main/ObbyBike")
+    end
+})
+
+GameScriptsTab:CreateButton({
+    Name = "🏃 Escape Running Head",
+    Callback = function()
+        LoadScript("🏃 Escape Running Head", "https://raw.githubusercontent.com/Efe0626/EscapeRunningHead/main/EscapeRunningHead")
+    end
+})
 
 --[[
     ==============================
@@ -1128,6 +1675,7 @@ end)
 CombatTab:CreateToggle({
     Name = "🎯 Включить Aimbot",
     CurrentValue = AimbotConfig.Enabled,
+    Flag = "AimbotEnabled",
     Callback = function(value)
         AimbotConfig.Enabled = value
     end
@@ -2029,7 +2577,7 @@ KillAllTab:CreateToggle({
    CurrentValue = isActive,
    Callback = function(Value)
       isActive = Value
-   end,
+   end
 })
 
 KillAllTab:CreateToggle({
@@ -2037,7 +2585,7 @@ KillAllTab:CreateToggle({
    CurrentValue = killAllEnabled,
    Callback = function(Value)
       killAllEnabled = Value
-   end,
+   end
 })
 
 KillAllTab:CreateToggle({
@@ -2045,7 +2593,7 @@ KillAllTab:CreateToggle({
    CurrentValue = ignoreTeam,
    Callback = function(Value)
       ignoreTeam = Value
-   end,
+   end
 })
 
 KillAllTab:CreateSlider({
@@ -2056,7 +2604,7 @@ KillAllTab:CreateSlider({
    CurrentValue = safeZoneRadius,
    Callback = function(Value)
       safeZoneRadius = Value
-   end,
+   end
 })
 
 -- Цикл Kill All с увеличенной дистанцией до 10000
@@ -2348,13 +2896,15 @@ end)
 
 -- Уведомление о загрузке
 Rayfield:Notify({
-    Title = "💜 ELITE HUB v8.2 ULTRA ЗАГРУЖЕН!",
-    Content = "Game Hub + Все функции включены | Kill All + Доп.скрипты\n⚔️ Дистанция Kill All увеличена до 10000\n🎭 Добавлено 40+ FE скриптов!\n🚀 Добавлено 20+ хабов!",
-    Duration = 6,
+    Title = "💜🎉 ELITE HUB 12.6 HASKER ЗАГРУЖЕН! 🎉💜",
+    Content = "🔥 Hasker Edition | Все функции включены 🔥\n⚔️💥 Дистанция Kill All увеличена до 10000\n🎭✨ Добавлено 70+ FE скриптов!\n🚀🌟 Добавлено 40+ хабов!\n🎯🎮 Добавлено 25+ скриптов для игр!\n♾️ Infinite Yield, Dark Dex и другие утилиты!",
+    Duration = 8,
     Image = 7733960981
 })
 
-print("🌟 ELITE HUB v8.2 ULTRA успешно загружен!")
-print("⚔️ Дистанция Kill All увеличена до 10000 studs")
-print("🎭 Добавлено 40+ FE скриптов в новую вкладку!")
-print("🚀 Добавлено 20+ хабов в новую вкладку!")
+print("🌟💎 ELITE HUB 12.6 HASKER успешно загружен! 💎🌟")
+print("⚔️💥 Дистанция Kill All увеличена до 10000 studs")
+print("🎭✨ Добавлено 100+ FE скриптов в новую вкладку!")
+print("🚀🌟 Добавлено 40+ универсальных хабов!")
+print("🎯🎮 Добавлено 25+ скриптов для популярных игр!")
+print("♾️💻 Добавлены популярные утилиты: Infinite Yield, Dark Dex, Remote Spy и другие!")
